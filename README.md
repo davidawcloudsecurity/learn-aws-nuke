@@ -4,6 +4,7 @@ How to destroy aws resources or services or exclude specific ones
 Resource - https://medium.com/aws-security-user-group-west-africa/aws-tools-aws-nuke-to-clean-up-an-account-4b9077103780
 
 https://github.com/rebuy-de/aws-nuke
+
 Get updated releases - https://github.com/search?q=+https%3A%2F%2Fgithub.com%2Frebuy-de%2Faws-nuke%2Freleases%2Fdownload&type=pullrequests
 ```ruby
 ## Download aws-nuke
