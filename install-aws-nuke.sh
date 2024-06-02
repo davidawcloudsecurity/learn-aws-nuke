@@ -46,4 +46,6 @@ EOL
 
 echo "aws-nuke has been installed successfully."
 echo "Configuration file config.yml has been created."
+echo "vi or nano config.yml to filter user not to be deleted."
+echo "Run the following commands to execute aws-nuke"
 echo "aws-nuke -c config.yml --no-dry-run"
