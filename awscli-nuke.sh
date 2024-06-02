@@ -9,11 +9,12 @@ function check_aws_cli_installed {
 }
 
 # Function to check if a resource has a specific tag
-function has_gcc_tag {
+function has_your_tag_key_tag {
     local resource_id=$1
     local resource_type=$2
+    local tag_key="your_tag_key"  # Update tag key here
 
-    tags=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$resource_id" "Name=key,Values=gcc" --query 'Tags[*].Value' --output text)
+    tags=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$resource_id" "Name=key,Values=$tag_key" --query 'Tags[*].Value' --output text)
     if [ -n "$tags" ]; then
         echo "true"
     else
@@ -26,7 +27,7 @@ function delete_ec2_instances {
     echo "Deleting all EC2 instances..."
     instance_ids=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --output text)
     for instance_id in $instance_ids; do
-        if [ $(has_gcc_tag $instance_id) == "false" ]; then
+        if [ $(has_your_tag_key_tag $instance_id) == "false" ]; then
             echo "Deleting EC2 instance $instance_id..."
             aws ec2 terminate-instances --instance-ids $instance_id
             aws ec2 wait instance-terminated --instance-ids $instance_id
@@ -37,7 +38,7 @@ function delete_ec2_instances {
                 return 1
             fi
         else
-            echo "EC2 instance $instance_id has the gcc tag. Skipping..."
+            echo "EC2 instance $instance_id has the your_tag_key tag. Skipping..."
         fi
     done
     echo "All specified EC2 instances deleted."
@@ -49,7 +50,7 @@ function delete_s3_buckets {
     echo "Deleting all S3 buckets..."
     buckets=$(aws s3api list-buckets --query 'Buckets[*].Name' --output text)
     for bucket in $buckets; do
-        if [ $(has_gcc_tag $bucket) == "false" ]; then
+        if [ $(has_your_tag_key_tag $bucket) == "false" ]; then
             echo "Deleting bucket $bucket..."
             aws s3 rm s3://$bucket --recursive
             aws s3api delete-bucket --bucket $bucket
@@ -60,7 +61,7 @@ function delete_s3_buckets {
                 return 1
             fi
         else
-            echo "Bucket $bucket has the gcc tag. Skipping..."
+            echo "Bucket $bucket has the your_tag_key tag. Skipping..."
         fi
     done
     echo "All specified S3 buckets deleted."
@@ -72,7 +73,7 @@ function delete_tgw_attachments {
     echo "Deleting all Transit Gateway Attachments..."
     attachments=$(aws ec2 describe-transit-gateway-attachments --query 'TransitGatewayAttachments[*].TransitGatewayAttachmentId' --output text)
     for attachment in $attachments; do
-        if [ $(has_gcc_tag $attachment) == "false" ]; then
+        if [ $(has_your_tag_key_tag $attachment) == "false" ]; then
             echo "Deleting Transit Gateway Attachment $attachment..."
             aws ec2 delete-transit-gateway-vpc-attachment --transit-gateway-attachment-id $attachment
             if [ $? -eq 0 ]; then
@@ -82,7 +83,7 @@ function delete_tgw_attachments {
                 return 1
             fi
         else
-            echo "Transit Gateway Attachment $attachment has the gcc tag. Skipping..."
+            echo "Transit Gateway Attachment $attachment has the your_tag_key tag. Skipping..."
         fi
     done
     echo "All specified Transit Gateway Attachments deleted."
@@ -94,7 +95,7 @@ function delete_transit_gateways {
     echo "Deleting all Transit Gateways..."
     transit_gateways=$(aws ec2 describe-transit-gateways --query 'TransitGateways[*].TransitGatewayId' --output text)
     for tg in $transit_gateways; do
-        if [ $(has_gcc_tag $tg) == "false" ]; then
+        if [ $(has_your_tag_key_tag $tg) == "false" ]; then
             echo "Checking attachments for Transit Gateway $tg..."
             attachments=$(aws ec2 describe-transit-gateway-attachments --filters Name=transit-gateway-id,Values=$tg --query 'TransitGatewayAttachments[?State!=`deleted`].TransitGatewayAttachmentId' --output text)
             if [ -z "$attachments" ]; then
@@ -111,7 +112,7 @@ function delete_transit_gateways {
                 return 1
             fi
         else
-            echo "Transit Gateway $tg has the gcc tag. Skipping..."
+            echo "Transit Gateway $tg has the your_tag_key tag. Skipping..."
         fi
     done
     echo "All specified Transit Gateways deleted."
@@ -122,7 +123,7 @@ function delete_transit_gateways {
 check_aws_cli_installed
 
 # Confirm deletion
-read -p "Are you sure you want to delete all EC2 instances, S3 buckets, Transit Gateways, and their attachments (excluding those with the gcc tag) in your AWS account? (yes/no): " confirmation
+read -p "Are you sure you want to delete all EC2 instances, S3 buckets, Transit Gateways, and their attachments (excluding those with the your_tag_key tag) in your AWS account? (yes/no): " confirmation
 if [ "$confirmation" != "yes" ]; then
     echo "Aborting deletion."
     exit 0
