@@ -27,4 +27,23 @@ sudo mv aws-nuke /usr/local/bin/aws-nuke
 # Clean up
 rm aws-nuke.tar.gz
 
+# Create the YAML configuration file
+cat <<EOL > config.yml
+regions:
+- eu-west-1
+
+account-blocklist:
+- "999999999999" # production
+
+accounts:
+  "000000000000": # aws-nuke-example
+    filters:
+      IAMUser:
+      - "my-user"
+      IAMUserPolicyAttachment:
+      - "my-user -> AdministratorAccess"
+EOL
+
 echo "aws-nuke has been installed successfully."
+echo "Configuration file config.yml has been created."
+echo "aws-nuke -c config.yml --no-dry-run"
