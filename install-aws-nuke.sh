@@ -27,21 +27,30 @@ sudo mv aws-nuke /usr/local/bin/aws-nuke
 # Clean up
 rm aws-nuke.tar.gz
 
-# Create the YAML configuration file
+# Retrieve the current AWS account ID using AWS CLI
+account_id=$(aws sts get-caller-identity --query Account --output text)
+
+# Retrieve the current AWS region
+current_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+
+# Prompt the user for the IAM user name
+read -p "Enter the IAM user name to exclude from deletion: " iam_user_name
+
+# Create the YAML configuration file with the retrieved account ID and region
 cat <<EOL > config.yml
 regions:
-- eu-west-1
+- $current_region
 
 account-blocklist:
 - "999999999999" # production
 
 accounts:
-  "000000000000": # aws-nuke-example
+  "$account_id": # aws-nuke-example
     filters:
       IAMUser:
-      - "my-user"
+      - "$iam_user_name"
       IAMUserPolicyAttachment:
-      - "my-user -> AdministratorAccess"
+      - "$iam_user_name -> AdministratorAccess"
 EOL
 
 echo "aws-nuke has been installed successfully."
