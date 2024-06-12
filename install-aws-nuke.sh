@@ -39,41 +39,48 @@ read -p "Enter the IAM user name to exclude from deletion: " iam_user_name
 # Initialize IAM user filters
 iam_user_filter=""
 iam_user_policy_attachment_filter=""
+formatted_roles=""
 
 # If IAM user name is provided, set the IAM user filters
 if [ -n "$iam_user_name" ]; then
-    # Get the attached roles for the IAM user
-    roles=$(aws iam list-attached-user-policies --user-name "$iam_user_name" --query 'AttachedPolicies[*].PolicyName' --output text)
+    # Get the attached policies for the IAM user
+    policies=$(aws iam list-attached-user-policies --user-name "$iam_user_name" --query 'AttachedPolicies[*].PolicyName' --output text)
     
     # Format the IAM user filters
     iam_user_filter="      IAMUser:\n      - \"$iam_user_name\""
     iam_user_policy_attachment_filter="      IAMUserPolicyAttachment:\n      - \"$iam_user_name -> AdministratorAccess\""
     
-    # Format roles as array items in YAML
-    formatted_roles=$(echo $roles | tr ' ' '\n' | sed 's/^/      - "/' | sed 's/$/"/')
+    # Format policies as array items in YAML
+    formatted_policies=$(echo $policies | tr ' ' '\n' | sed 's/^/      - "/' | sed 's/$/"/')
 else
     # Prompt the user for the IAM role name
-    read -p "Enter additional IAM role to exclude from deletion (comma separated if multiple): " iam_role_name
+    read -p "Enter the IAM role to exclude from deletion: " iam_role_name
     # Format the role as array items in YAML
     formatted_roles=$(echo $iam_role_name | tr ' ' '\n' | sed 's/^/      - "/' | sed 's/$/"/')
 fi
 
 # Create the YAML configuration file with the retrieved account ID and region
-cat <<EOL > config.yml
-regions:
-- $current_region
-
-account-blocklist:
-- "999999999999" # production
-
-accounts:
-  "$account_id": # aws-nuke-example
-    filters:
-$iam_user_filter
-$iam_user_policy_attachment_filter
-      IAMRole:
-$formatted_roles
-EOL
+{
+echo "regions:"
+echo "- $current_region"
+echo
+echo "account-blocklist:"
+echo "- \"999999999999\" # production"
+echo
+echo "accounts:"
+echo "  \"$account_id\": # aws-nuke-example"
+echo "    filters:"
+if [ -n "$iam_user_filter" ]; then
+    echo "$iam_user_filter"
+fi
+if [ -n "$iam_user_policy_attachment_filter" ]; then
+    echo "$iam_user_policy_attachment_filter"
+fi
+echo "      IAMRole:"
+if [ -n "$formatted_roles" ]; then
+    echo "$formatted_roles"
+fi
+} > config.yml
 
 # Remove any extra newlines
 sed -i '/^ *$/d' config.yml
