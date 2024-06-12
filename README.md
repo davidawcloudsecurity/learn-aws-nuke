@@ -8,6 +8,12 @@ https://github.com/rebuy-de/aws-nuke
 Get updated releases - https://github.com/search?q=+https%3A%2F%2Fgithub.com%2Frebuy-de%2Faws-nuke%2Freleases%2Fdownload&type=pullrequests
 
 https://medium.com/airwalk/aws-nuke-without-destroying-sso-f73d9cce85fd
+
+https://blog.crafteo.io/2022/06/25/destroy-every-resources-from-your-aws-accounts-with-aws-nuke/
+
+Issues with s3 bucket and not responding - https://github.com/rebuy-de/aws-nuke/issues/613
+
+
 ```ruby
 ## Download aws-nuke
 wget -c https://github.com/rebuy-de/aws-nuke/releases/download/v2.16.0/aws-nuke-v2.16.0-linux-amd64.tar.gz
