@@ -14,7 +14,25 @@ for BUCKET in $BUCKETS; do
         continue
     fi
 
-    # Delete all objects in the bucket
+    # Delete all versions and delete markers in the bucket
+    versions=$(aws s3api list-object-versions --bucket "$BUCKET" --query 'Versions[].{Key:Key,VersionId:VersionId}' --output json)
+    delete_markers=$(aws s3api list-object-versions --bucket "$BUCKET" --query 'DeleteMarkers[].{Key:Key,VersionId:VersionId}' --output json)
+
+    echo "$versions" | jq -c '.[]' | while read -r version; do
+        key=$(echo "$version" | jq -r '.Key')
+        versionId=$(echo "$version" | jq -r '.VersionId')
+        echo "Deleting object $key version $versionId from bucket $BUCKET"
+        aws s3api delete-object --bucket "$BUCKET" --key "$key" --version-id "$versionId"
+    done
+
+    echo "$delete_markers" | jq -c '.[]' | while read -r marker; do
+        key=$(echo "$marker" | jq -r '.Key')
+        versionId=$(echo "$marker" | jq -r '.VersionId')
+        echo "Deleting delete marker $key version $versionId from bucket $BUCKET"
+        aws s3api delete-object --bucket "$BUCKET" --key "$key" --version-id "$versionId"
+    done
+
+    # Delete all objects in the bucket (to handle any remaining non-versioned objects)
     echo "Deleting all objects in bucket: $BUCKET"
     aws s3 rm "s3://$BUCKET" --recursive
 
