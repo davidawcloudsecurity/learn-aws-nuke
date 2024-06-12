@@ -6,6 +6,8 @@ Resource - https://medium.com/aws-security-user-group-west-africa/aws-tools-aws-
 https://github.com/rebuy-de/aws-nuke
 
 Get updated releases - https://github.com/search?q=+https%3A%2F%2Fgithub.com%2Frebuy-de%2Faws-nuke%2Freleases%2Fdownload&type=pullrequests
+
+https://medium.com/airwalk/aws-nuke-without-destroying-sso-f73d9cce85fd
 ```ruby
 ## Download aws-nuke
 wget -c https://github.com/rebuy-de/aws-nuke/releases/download/v2.16.0/aws-nuke-v2.16.0-linux-amd64.tar.gz
