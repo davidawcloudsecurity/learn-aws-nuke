@@ -13,6 +13,8 @@ https://blog.crafteo.io/2022/06/25/destroy-every-resources-from-your-aws-account
 
 Issues with s3 bucket and not responding - https://github.com/rebuy-de/aws-nuke/issues/613
 
+how to delete s3 bucket - https://stackoverflow.com/questions/29809105/how-do-i-delete-a-versioned-bucket-in-aws-s3-using-the-cli
+
 
 ```ruby
 ## Download aws-nuke
