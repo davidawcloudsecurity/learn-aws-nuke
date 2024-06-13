@@ -24,13 +24,18 @@ bucket_name=$1
 #object_versions=$(aws s3api list-object-versions --bucket "$bucket_name" --output=json --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')
 object_versions=$(aws s3api list-object-versions --bucket "$bucket_name" | grep VersionId)
 
+# Check if object_versions is not empty
+if [ -z "$object_versions" ]; then
+    echo "No object versions found in bucket $bucket_name."
+    exit 0
+fi
+
 # Loop through each object version and delete it
-echo "$object_versions" | jq -c '.Objects[]' | while IFS= read -r object; do
-    key=$(echo "$object" | jq -r '.Key')
-    versionId=$(echo "$object" | jq -r '.VersionId')
+echo "$object_versions" | while read -r key versionId; do
     echo "Deleting object version: $key (VersionId: $versionId)"
     aws s3api delete-object --bucket "$bucket_name" --key "$key" --version-id "$versionId"
 done
+
 aws s3 rb s3://$bucket_name --force
 }
 
