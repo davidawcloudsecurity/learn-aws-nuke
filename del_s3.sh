@@ -23,8 +23,8 @@ buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output text)
 
 # Loop through each bucket and delete its objects
 for bucket in $buckets; do
-    aws s3 rb s3://$bucket --force
     delete_objects_in_bucket $bucket
+    aws s3 rb s3://$bucket --force
 done
 
 echo "All S3 buckets and their objects have been deleted."
