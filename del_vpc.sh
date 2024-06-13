@@ -31,6 +31,29 @@ delete_subnet() {
 # Function to delete a route table
 delete_route_table() {
     route_table_id=$1
+    echo "Processing route table: $route_table_id"
+    
+    # Disassociate route table associations
+    associations=$(aws ec2 describe-route-tables --route-table-ids $route_table_id --query 'RouteTables[0].Associations' --output json)
+    echo "$associations" | jq -c '.[]' | while read -r assoc; do
+        assoc_id=$(echo "$assoc" | jq -r '.RouteTableAssociationId')
+        echo "Disassociating route table association: $assoc_id"
+        aws ec2 disassociate-route-table --association-id $assoc_id
+    done
+    
+    # Delete routes associated with internet gateway or NAT gateway
+    routes=$(aws ec2 describe-route-tables --route-table-ids $route_table_id --query 'RouteTables[0].Routes' --output json)
+    echo "$routes" | jq -c '.[]' | while read -r route; do
+        gateway_id=$(echo "$route" | jq -r '.GatewayId // empty')
+        nat_gateway_id=$(echo "$route" | jq -r '.NatGatewayId // empty')
+        destination_cidr_block=$(echo "$route" | jq -r '.DestinationCidrBlock // empty')
+        
+        if [ -n "$gateway_id" ] || [ -n "$nat_gateway_id" ]; then
+            echo "Deleting route with destination $destination_cidr_block from route table $route_table_id"
+            aws ec2 delete-route --route-table-id $route_table_id --destination-cidr-block $destination_cidr_block
+        fi
+    done
+    
     echo "Deleting route table: $route_table_id"
     aws ec2 delete-route-table --route-table-id $route_table_id
 }
