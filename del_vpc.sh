@@ -21,14 +21,6 @@ install_awscli() {
 # Install AWS CLI if not found
 install_awscli
 
-# Check if VPC ID is provided
-if [ -z "$1" ]; then
-    echo "Usage: $0 <vpc-id>"
-    exit 1
-fi
-
-VPC_ID=$1
-
 # Function to delete a subnet
 delete_subnet() {
     subnet_id=$1
@@ -61,49 +53,62 @@ delete_nat_gateway() {
 # Function to detach and delete an internet gateway
 delete_internet_gateway() {
     igw_id=$1
-    echo "Detaching internet gateway: $igw_id"
-    aws ec2 detach-internet-gateway --internet-gateway-id $igw_id --vpc-id $VPC_ID
+    vpc_id=$2
+    echo "Detaching internet gateway: $igw_id from VPC: $vpc_id"
+    aws ec2 detach-internet-gateway --internet-gateway-id $igw_id --vpc-id $vpc_id
     echo "Deleting internet gateway: $igw_id"
     aws ec2 delete-internet-gateway --internet-gateway-id $igw_id
 }
 
 # Function to delete the VPC
 delete_vpc() {
-    echo "Deleting VPC: $VPC_ID"
-    aws ec2 delete-vpc --vpc-id $VPC_ID
+    vpc_id=$1
+    echo "Deleting VPC: $vpc_id"
+    aws ec2 delete-vpc --vpc-id $vpc_id
 }
 
-# List and delete all subnets
-subnets=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query "Subnets[*].SubnetId" --output text)
-for subnet in $subnets; do
-    delete_subnet $subnet
+# Get the list of all VPCs
+echo "Fetching list of VPCs..."
+VPCS=$(aws ec2 describe-vpcs --query "Vpcs[*].VpcId" --output text)
+
+# Loop through each VPC
+for VPC_ID in $VPCS; do
+    echo "Processing VPC: $VPC_ID"
+    
+    # List and delete all subnets
+    subnets=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query "Subnets[*].SubnetId" --output text)
+    for subnet in $subnets; do
+        delete_subnet $subnet
+    done
+
+    # List and delete all route tables
+    route_tables=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" --query "RouteTables[*].RouteTableId" --output text)
+    for route_table in $route_tables; do
+        delete_route_table $route_table
+    done
+
+    # List and delete all security groups (excluding the default one)
+    security_groups=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPC_ID" --query "SecurityGroups[?GroupName!='default'].GroupId" --output text)
+    for sg in $security_groups; do
+        delete_security_group $sg
+    done
+
+    # List and delete all NAT gateways
+    nat_gateways=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query "NatGateways[*].NatGatewayId" --output text)
+    for nat_gw in $nat_gateways; do
+        delete_nat_gateway $nat_gw
+    done
+
+    # List and delete all internet gateways
+    internet_gateways=$(aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=$VPC_ID" --query "InternetGateways[*].InternetGatewayId" --output text)
+    for igw in $internet_gateways; do
+        delete_internet_gateway $igw $VPC_ID
+    done
+
+    # Finally, delete the VPC
+    delete_vpc $VPC_ID
+
+    echo "VPC $VPC_ID and its associated resources have been deleted."
 done
 
-# List and delete all route tables
-route_tables=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" --query "RouteTables[*].RouteTableId" --output text)
-for route_table in $route_tables; do
-    delete_route_table $route_table
-done
-
-# List and delete all security groups (excluding the default one)
-security_groups=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPC_ID" --query "SecurityGroups[?GroupName!='default'].GroupId" --output text)
-for sg in $security_groups; do
-    delete_security_group $sg
-done
-
-# List and delete all NAT gateways
-nat_gateways=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query "NatGateways[*].NatGatewayId" --output text)
-for nat_gw in $nat_gateways; do
-    delete_nat_gateway $nat_gw
-done
-
-# List and delete all internet gateways
-internet_gateways=$(aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=$VPC_ID" --query "InternetGateways[*].InternetGatewayId" --output text)
-for igw in $internet_gateways; do
-    delete_internet_gateway $igw
-done
-
-# Finally, delete the VPC
-delete_vpc
-
-echo "VPC and its associated resources have been deleted."
+echo "All VPCs and their associated resources have been deleted."
