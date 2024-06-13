@@ -21,7 +21,8 @@ delete_version_in_bucket () {
 bucket_name=$1
 
 # Get list of object versions
-object_versions=$(aws s3api list-object-versions --bucket "$bucket_name" --output=json --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')
+#object_versions=$(aws s3api list-object-versions --bucket "$bucket_name" --output=json --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')
+object_versions=$(aws s3api list-object-versions --bucket "$bucket_name" | grep VersionId)
 
 # Loop through each object version and delete it
 echo "$object_versions" | jq -c '.Objects[]' | while IFS= read -r object; do
@@ -39,9 +40,9 @@ buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output text)
 
 # Loop through each bucket and delete its objects
 for bucket in $buckets; do
-    #delete_objects_in_bucket $bucket
     aws s3 rb s3://$bucket --force
     aws s3api delete-bucket --bucket $bucket --region ap-southeast-1
+    delete_objects_in_bucket $bucket
     delete_version_in_bucket $bucket
 done
 
