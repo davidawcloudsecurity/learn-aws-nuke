@@ -14,9 +14,17 @@ process_resource_type() {
     
     expect <<EOF
 spawn aws-nuke -t "$resource_type" -c config.yml --no-dry-run
-expect "Do you really want to nuke these resources on the account with the ID 654397236400 and the alias 'htx-anup'?"
-send "htx-anup\r"
-expect eof
+expect {
+    "Do you really want to nuke the account with the ID*" {
+        send "htx-anup\r"
+        exp_continue
+    }
+    "Do you want to continue? Enter account alias to continue." {
+        send "htx-anup\r"
+        exp_continue
+    }
+    eof
+}
 EOF
 }
 
