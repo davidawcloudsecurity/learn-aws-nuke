@@ -26,4 +26,5 @@ prompt_for_input() {
 while true; do
     display_resource_types
     prompt_for_input
+    read -p "Enter to continue"
 done
