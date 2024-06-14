@@ -9,9 +9,9 @@ display_resource_types() {
 # Function to prompt user for input
 prompt_for_input() {
     read -p "Enter the number corresponding to the resource type you want to nuke: " choice
-    selected_resource=$(aws-nuke list-resource-types | awk "NR==$choice")
+    selected_resource=$(aws-nuke resource-types | awk "NR==$choice")
     echo "You selected: $selected_resource"
-    aws-nuke -t $selected_resource -c config.yml
+    aws-nuke -t $selected_resource -c config.yml --no-dry-run
 }
 
 # Main script
