@@ -3,7 +3,8 @@
 # python3 manage_backup_vaults.py --list
 # To delete a specific backup vault:
 # python3 manage_backup_vaults.py your-backup-vault-name
-cat <<'EOF' > /tmp/nuke-recovery-point.py
+
+cat <<'EOF' > /tmp/manage_backup_vaults.py
 import boto3
 from botocore.exceptions import ClientError
 
@@ -18,7 +19,6 @@ def list_backup_vaults():
         if not vaults:
             print("No backup vaults found.")
         else:
-            print("Backup Vaults:")
             for vault in vaults:
                 print(vault['BackupVaultName'])
     except ClientError as e:
@@ -29,17 +29,12 @@ def stop_backup_jobs():
     client = boto3.client('backup')
     
     try:
-        # List all backup jobs
-        response = client.list_backup_jobs(
-            ByState='RUNNING'
-        )
-        
+        response = client.list_backup_jobs(ByState='RUNNING')
         backup_jobs = response['BackupJobs']
         
         for job in backup_jobs:
             job_id = job['BackupJobId']
             try:
-                # Stop the backup job
                 client.stop_backup_job(BackupJobId=job_id)
                 print(f'Stopped backup job: {job_id}')
             except ClientError as e:
@@ -53,9 +48,7 @@ def delete_recovery_points(vault_name):
     
     try:
         paginator = client.get_paginator('list_recovery_points_by_backup_vault')
-        response_iterator = paginator.paginate(
-            BackupVaultName=vault_name
-        )
+        response_iterator = paginator.paginate(BackupVaultName=vault_name)
         
         for response in response_iterator:
             recovery_points = response['RecoveryPoints']
@@ -63,11 +56,7 @@ def delete_recovery_points(vault_name):
             for recovery_point in recovery_points:
                 recovery_point_arn = recovery_point['RecoveryPointArn']
                 try:
-                    # Delete the recovery point
-                    client.delete_recovery_point(
-                        BackupVaultName=vault_name,
-                        RecoveryPointArn=recovery_point_arn
-                    )
+                    client.delete_recovery_point(BackupVaultName=vault_name, RecoveryPointArn=recovery_point_arn)
                     print(f'Deleted recovery point: {recovery_point_arn}')
                 except ClientError as e:
                     print(f'Error deleting recovery point {recovery_point_arn}: {e}')
@@ -79,7 +68,6 @@ def delete_backup_vault(vault_name):
     client = boto3.client('backup')
     
     try:
-        # Delete the backup vault
         client.delete_backup_vault(BackupVaultName=vault_name)
         print(f'Deleted backup vault: {vault_name}')
     except ClientError as e:
@@ -109,14 +97,19 @@ if __name__ == '__main__':
         main(args.vault_name)
     else:
         parser.print_help()
-EOF        
-recovery_points=$(python3 manage_backup_vaults.py --list)
+EOF
 
-# Loop through each bucket and delete it using the embedded Python script
-for point in $recovery_points; do
-  echo "Removing $point"
-  python3 /tmp/nuke-recovery-point.py "$point"
+# Capture the output of the vault listing
+vaults=$(python3 /tmp/manage_backup_vaults.py --list)
+
+# Ensure the vaults variable is a list
+IFS=$'\n' read -rd '' -a vault_list <<<"$vaults"
+
+# Loop through each vault and delete it using the embedded Python script
+for vault in "${vault_list[@]}"; do
+  echo "Removing $vault"
+  python3 /tmp/manage_backup_vaults.py "$vault"
 done
 
 # Clean up the temporary Python script
-rm /tmp/nuke-recovery-point.py
+rm /tmp/manage_backup_vaults.py
