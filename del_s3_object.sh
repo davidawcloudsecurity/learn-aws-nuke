@@ -27,7 +27,7 @@ while true; do
     break
   else
     # Delete delete markers
-    aws s3 rm s3://$bucket --recursive
+    aws s3 rm s3://$bucket_name --recursive
     delete_objects "$delete_markers" "$versions" "$bucket_name"
     aws s3 rb s3://$bucket_name --force   
   fi
