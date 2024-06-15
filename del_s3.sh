@@ -7,7 +7,7 @@ empty_s3_bucket() {
     
     # List and delete all object versions (to handle versioned buckets)
     object_keys=$(aws s3api list-object-versions --bucket $bucket_name  --query DeleteMarkers[*].Key --output text)
-    version_ids=$aws s3api list-object-versions --bucket wrong-account-id-r3z6t-deploy-tfstate-k9dlg  --query DeleteMarkers[*].VersionId --output text)
+    version_ids=$aws s3api list-object-versions --bucket $bucket_name  --query DeleteMarkers[*].VersionId --output text)
     for (( i=0; i<${#object_keys[@]}; i++ )); do
       object_key="${object_keys[$i]}"
       version_id="${version_ids[$i]}"
