@@ -21,6 +21,7 @@ prompt_for_input() {
     else
         echo "You selected: $selected_resource"
     expect <<EOF
+set timeout -1
 spawn aws-nuke -t "$selected_resource" -c config.yml --no-dry-run
 expect "Do you want to continue? Enter account alias to continue."
 send -- "$alias\r"
