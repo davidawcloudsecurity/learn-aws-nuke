@@ -3,10 +3,6 @@
 # Ask for user input
 read -p "Enter the bucket name you want to empty: " bucket_name
 
-# Get delete markers and versions
-delete_markers=$(aws s3api list-object-versions --bucket "$bucket_name" --query DeleteMarkers[*].Key --output json)
-versions=$(aws s3api list-object-versions --bucket "$bucket_name" --query DeleteMarkers[*].VersionId --output json)
-
 # Function to delete objects
 delete_objects() {
     local keys="$1"
@@ -21,8 +17,19 @@ delete_objects() {
         aws s3api delete-object --bucket "$bucket_name" --key "$key" --version-id "$version_id"
     done
 }
-
-# Delete delete markers
-delete_objects "$delete_markers" "$versions" "$bucket_name"
-aws s3 rb s3://$bucket_name --force
+while true; do
+  # Get delete markers and versions
+  delete_markers=$(aws s3api list-object-versions --bucket "$bucket_name" --query DeleteMarkers[*].Key --output json)
+  versions=$(aws s3api list-object-versions --bucket "$bucket_name" --query DeleteMarkers[*].VersionId --output json)
+  # Check if delete_markers is empty
+  if [[ -z "$delete_markers" ]]; then
+    echo "No delete markers found. Exiting loop."
+    break
+  else
+    # Delete delete markers
+    aws s3 rm s3://$bucket --recursive
+    delete_objects "$delete_markers" "$versions" "$bucket_name"
+    aws s3 rb s3://$bucket_name --force   
+  fi
+done
 echo "All delete markers and versions deleted from bucket $bucket_name."
