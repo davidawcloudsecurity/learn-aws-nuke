@@ -15,6 +15,7 @@ process_resource_type() {
     echo "Processing resource type $resource_index: $resource_type"
     
     expect <<EOF
+set timeout -1
 spawn aws-nuke -t "$resource_type" -c config.yml --no-dry-run
 expect {
     "Do you really want to nuke the account with the ID*" {
