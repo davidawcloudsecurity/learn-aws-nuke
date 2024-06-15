@@ -2,6 +2,7 @@
 
 # Ask for user input
 read -p "Enter the bucket name you want to empty: " bucket_name
+aws s3api put-bucket-versioning --bucket "$bucket_name" --versioning-configuration Status=Suspended
 
 # Function to delete objects
 delete_objects() {
