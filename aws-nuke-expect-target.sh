@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias=$(aws iam list-account-aliases --query AccountAliases --output text)
+
 # Function to display resource types and get the total number of resource types
 get_resource_types() {
     aws-nuke resource-types > resource_types.txt
@@ -16,11 +18,11 @@ process_resource_type() {
 spawn aws-nuke -t "$resource_type" -c config.yml --no-dry-run
 expect {
     "Do you really want to nuke the account with the ID*" {
-        send "htx-anup\r"
+        send "$alias\r"
         exp_continue
     }
     "Do you want to continue? Enter account alias to continue." {
-        send "htx-anup\r"
+        send "$alias\r"
         exp_continue
     }
     eof
