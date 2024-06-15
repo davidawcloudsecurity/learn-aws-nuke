@@ -20,7 +20,12 @@ prompt_for_input() {
         echo "Invalid choice. Please try again."
     else
         echo "You selected: $selected_resource"
-        aws-nuke -t "$selected_resource" -c config.yml --no-dry-run
+    expect <<EOF
+spawn aws-nuke -t "$selected_resource" -c config.yml --no-dry-run
+expect "Do you want to continue? Enter account alias to continue."
+send -- "$alias\r"
+expect eof
+EOF
     fi
 }
 
