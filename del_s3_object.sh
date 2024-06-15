@@ -1,6 +1,7 @@
 #!/bin/bash
 
-bucket_name="wrong-account-id-r3z6t-deploy-tfstate-k9dlg"
+# Ask for user input
+read -p "Enter the resource type you want to nuke: " bucket_name
 
 # Get delete markers and versions
 delete_markers=$(aws s3api list-object-versions --bucket "$bucket_name" --query DeleteMarkers[*].Key --output json)
