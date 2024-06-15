@@ -3,6 +3,7 @@
 # Function to empty all objects in an S3 bucket
 empty_s3_bucket() {
     bucket_name=$1
+    aws s3api put-bucket-versioning --bucket "$bucket_name" --versioning-configuration Status=Suspended
     echo "Emptying bucket: $bucket_name"
     
     # Get delete markers and versions
