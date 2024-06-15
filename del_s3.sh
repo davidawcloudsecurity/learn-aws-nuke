@@ -41,6 +41,7 @@ buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output text)
 for bucket in $buckets; do
     echo "Processing bucket: $bucket"
     aws s3 rb s3://$bucket --force
+    aws s3 rm s3://$bucket --recursive
     empty_s3_bucket $bucket
     aws s3 rb s3://$bucket --force
 done
