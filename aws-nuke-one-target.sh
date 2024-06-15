@@ -23,9 +23,20 @@ prompt_for_input() {
     expect <<EOF
 set timeout -1
 spawn aws-nuke -t "$selected_resource" -c config.yml --no-dry-run
-expect "Do you want to continue? Enter account alias to continue."
-send -- "$alias\r"
-expect eof
+expect {
+    "Do you really want to nuke the account with the ID*" {
+        send "$alias\r"
+        exp_continue
+    }
+    "Do you want to continue? Enter account alias to continue." {
+        send "$alias\r"
+        exp_continue
+    }
+    "Error*" {
+        exit 0
+    }
+    eof
+}
 EOF
     fi
 }
