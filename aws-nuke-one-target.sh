@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias=$(aws iam list-account-aliases --query AccountAliases --output text)
+
 # Function to display resource types
 display_resource_types() {
     echo "Select a resource type to nuke (or type 'exit' to quit):"
