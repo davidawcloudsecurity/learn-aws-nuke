@@ -1,6 +1,11 @@
 # learn-aws-nuke
 How to destroy aws resources or services or exclude specific ones
 
+# When run aws-nuke, if ask for account alias
+```ruby
+aws iam create-account-alias --account-alias
+```
+
 Resource - https://medium.com/aws-security-user-group-west-africa/aws-tools-aws-nuke-to-clean-up-an-account-4b9077103780
 
 https://github.com/rebuy-de/aws-nuke
