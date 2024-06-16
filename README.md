@@ -42,6 +42,21 @@ accounts:
   "<ACCOUNT_ID>": {} # aws-nuke-example
 ```
 ```ruby
+---
+regions:
+  - "eu-west-1"
+account-blocklist:
+- 1234567890
+
+resource-types:
+  # don't nuke IAM users
+  excludes:
+  - IAMUser
+
+accounts:
+  555133742: {}
+```
+```ruby
 ## View resources to be deleted
 aws-nuke -c nuke-config.yml --profile aws_nuke
 ## Delete resources
