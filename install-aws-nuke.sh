@@ -51,7 +51,7 @@ if [ -n "$iam_user_name" ]; then
     iam_user_policy_attachment_filter="      IAMUserPolicyAttachment:\n      - \"$iam_user_name -> AdministratorAccess\""
     
     # Format policies as array items in YAML
-    formatted_policies=$(echo $policies | tr ' ' '\n' | sed 's/^/      - "/' | sed 's/$/"/')
+    formatted_policies=$(echo "$policies" | tr ' ' '\n' | sed 's/^/        - "/' | sed 's/$/"/')
 else
     # Prompt the user for the IAM role name
     read -p "Enter the IAM role to exclude from deletion: " iam_role_name
