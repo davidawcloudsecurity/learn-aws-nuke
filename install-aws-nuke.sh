@@ -71,10 +71,10 @@ echo "accounts:"
 echo "  \"$account_id\": # aws-nuke-example"
 echo "    filters:"
 if [ -n "$iam_user_filter" ]; then
-    echo "$iam_user_filter"
+    echo -e "$iam_user_filter"
 fi
 if [ -n "$iam_user_policy_attachment_filter" ]; then
-    echo "$iam_user_policy_attachment_filter"
+    echo -e "$iam_user_policy_attachment_filter"
 fi
 echo "      IAMRole:"
 if [ -n "$formatted_roles" ]; then
