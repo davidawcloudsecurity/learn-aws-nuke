@@ -22,7 +22,7 @@ phases:
         echo
         echo "resource-types:"
         echo "  excludes:"
-        echo "- CodeBuildProject"
+        echo "  - CodeBuildProject"
         echo
         echo "accounts:"
         echo "  \"$account_id\": # aws-nuke-example"
