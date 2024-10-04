@@ -20,6 +20,10 @@ phases:
         echo "account-blocklist:"
         echo "- \"999999999999\" # production"
         echo
+        echo "resource-types:"
+        echo "  excludes:"
+        echo "- CodeBuildProject"
+        echo
         echo "accounts:"
         echo "  \"$account_id\": # aws-nuke-example"
         echo "    filters:"
