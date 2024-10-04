@@ -39,4 +39,6 @@ phases:
         fi
         } > config.yml
       - cat config.yml
+      - chmod 700 aws-nuke-one-target.sh
+      - ./aws-nuke-one-target.sh
 ```
