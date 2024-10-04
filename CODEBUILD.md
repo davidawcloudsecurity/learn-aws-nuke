@@ -1,3 +1,4 @@
+```bash
 version: 0.2
 
 phases:
@@ -33,4 +34,5 @@ phases:
             echo "$formatted_roles"
         fi
         } > config.yml
-        - cat config.yml
+      - cat config.yml
+```
