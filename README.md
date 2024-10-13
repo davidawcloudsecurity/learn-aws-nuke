@@ -24,6 +24,7 @@ how to delete s3 bucket - https://stackoverflow.com/questions/29809105/how-do-i-
 ```ruby
 ## Download aws-nuke
 wget -c https://github.com/rebuy-de/aws-nuke/releases/download/v2.16.0/aws-nuke-v2.16.0-linux-amd64.tar.gz
+wget -c https://github.com/rebuy-de/aws-nuke/releases/download/v2.25.0/aws-nuke-v2.25.0-linux-amd64.tar.gz
 ## Extract the aws-nuke binary
 tar -xvf aws-nuke-v2.16.0-linux-amd64.tar.gz
 ## Rename the extracted binary to aws-nuke
