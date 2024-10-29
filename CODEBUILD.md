@@ -50,16 +50,8 @@ phases:
         echo "accounts:"
         echo "  \"$account_id\": # aws-nuke-example"
         echo "    filters:"
-        if [ -n "$iam_user_filter" ]; then
-            echo -e "$iam_user_filter"
-        fi
-        if [ -n "$iam_user_policy_attachment_filter" ]; then
-            echo -e "$iam_user_policy_attachment_filter"
-        fi
-        echo "      IAMRole:"
-        if [ -n "$formatted_roles" ]; then
-            echo "$formatted_roles"
-        fi
+        echo "      CloudWatchLogGroup:"
+        echo "        - \"/aws/codebuild/aws-nuke\""
         } > config.yml
       - cat config.yml
       - chmod 700 aws-nuke-target-all.sh
