@@ -17,6 +17,9 @@ phases:
         echo "regions:"
         echo "- $REGION"
         echo
+        echo "account-blocklist:"
+        echo "- \"999999999999\" # production"
+        echo
         echo "resource-types:"
         echo "  excludes:"
         echo "  - CodeBuildProject"
