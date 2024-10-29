@@ -20,32 +20,32 @@ phases:
         echo "resource-types:"
         echo "  excludes:"
         echo "  - CodeBuildProject"
-        echo "  - ConfigServiceConfigRule
-        echo "  - MachineLearningMLModel # Excluded due to ML being unavailable
-        echo "  - MachineLearningDataSource # Excluded due to ML being unavailable
-        echo "  - MachineLearningBranchPrediction # Excluded due to ML being unavailable
-        echo "  - MachineLearningEvaluation # Excluded due to ML being unavailable
-        echo "  - RoboMakerDeploymentJob # Deprecated Service
-        echo "  - RoboMakerFleet # Deprecated Service
-        echo "  - RoboMakerRobot # Deprecated Service
-        echo "  - RoboMakerSimulationJob
-        echo "  - RoboMakerRobotApplication
-        echo "  - RoboMakerSimulationApplication
-        echo "  - OpsWorksApp # Deprecated service
-        echo "  - OpsWorksInstance # Deprecated service
-        echo "  - OpsWorksLayer # Deprecated service
-        echo "  - OpsWorksUserProfile # Deprecated service
-        echo "  - OpsWorksCMBackup # Deprecated service
-        echo "  - OpsWorksCMServer # Deprecated service
-        echo "  - OpsWorksCMServerState # Deprecated service
-        echo "  - CodeStarProject # Deprecated service
-        echo "  - CodeStarConnection # Deprecated service
-        echo "  - CodeStarNotification # Deprecated service
-        echo "  - Cloud9Environment # Deprecated service
-        echo "  - CloudSearchDomain # Deprecated service
-        echo "  - RedshiftServerlessSnapshot # Deprecated service
-        echo "  - RedshiftServerlessNamespace # Deprecated service
-        echo "  - RedshiftServerlessWorkgroup # Deprecated service
+        echo "  - ConfigServiceConfigRule"
+        echo "  - MachineLearningMLModel" # Excluded due to ML being unavailable
+        echo "  - MachineLearningDataSource" # Excluded due to ML being unavailable
+        echo "  - MachineLearningBranchPrediction" # Excluded due to ML being unavailable
+        echo "  - MachineLearningEvaluation" # Excluded due to ML being unavailable
+        echo "  - RoboMakerDeploymentJob" # Deprecated Service
+        echo "  - RoboMakerFleet" # Deprecated Service
+        echo "  - RoboMakerRobot" # Deprecated Service
+        echo "  - RoboMakerSimulationJob"
+        echo "  - RoboMakerRobotApplication"
+        echo "  - RoboMakerSimulationApplication"
+        echo "  - OpsWorksApp" # Deprecated service
+        echo "  - OpsWorksInstance" # Deprecated service
+        echo "  - OpsWorksLayer" # Deprecated service
+        echo "  - OpsWorksUserProfile" # Deprecated service
+        echo "  - OpsWorksCMBackup" # Deprecated service
+        echo "  - OpsWorksCMServer" # Deprecated service
+        echo "  - OpsWorksCMServerState" # Deprecated service
+        echo "  - CodeStarProject" # Deprecated service
+        echo "  - CodeStarConnection" # Deprecated service
+        echo "  - CodeStarNotification" # Deprecated service
+        echo "  - Cloud9Environment" # Deprecated service
+        echo "  - CloudSearchDomain" # Deprecated service
+        echo "  - RedshiftServerlessSnapshot" # Deprecated service
+        echo "  - RedshiftServerlessNamespace" # Deprecated service
+        echo "  - RedshiftServerlessWorkgroup" # Deprecated service
         echo
         echo "accounts:"
         echo "  \"$account_id\": # aws-nuke-example"
