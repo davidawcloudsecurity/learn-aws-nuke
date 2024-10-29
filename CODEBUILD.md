@@ -53,7 +53,7 @@ phases:
         echo "accounts:"
         echo "  \"$account_id\": # aws-nuke-example"
         echo "    filters:"
-        echo "      CloudWatchLogGroup:"
+        echo "      CloudWatchLogsLogGroup:"
         echo "        - \"/aws/codebuild/aws-nuke\""
         } > config.yml
       - cat config.yml
